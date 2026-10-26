@@ -81,6 +81,11 @@ final class Status {
         return String.format(Locale.US, "%02d:%02d", m / 60, m % 60);
     }
 
+    /** Кінець відключення: якщо початок уже «завтра», слово «завтра» вдруге не пишемо. */
+    private static String endOf(int s, int e) {
+        return s >= 1440 ? hm(e) : upto(e);
+    }
+
     private static String upto(int m) {
         return (m >= 1440 ? "завтра " : "") + hm(m);
     }
@@ -282,7 +287,7 @@ final class Status {
                     if (b != cur && b[0] >= cur[1]) { nx = b; break; }
                 }
                 if (nx != null) {
-                    lines.add("Далі світло до " + upto(nx[0]) + ", потім відключення до " + upto(nx[1]));
+                    lines.add("Далі світло до " + upto(nx[0]) + ", потім відключення до " + endOf(nx[0], nx[1]));
                 } else if (unpublished) {
                     lines.add("Графік на завтра ще не сформований");
                 } else {
@@ -290,16 +295,16 @@ final class Status {
                 }
             } else {
                 lines.add("Відключення не за графіком");
-                if (next != null) lines.add("За графіком далі: " + upto(next[0]) + " – " + upto(next[1]));
+                if (next != null) lines.add("За графіком далі: " + upto(next[0]) + " – " + endOf(next[0], next[1]));
             }
         } else {
             if (cur != null) {
                 lines.add("Світло є, хоча за графіком мало б не бути до " + upto(cur[1]));
-                if (next != null) lines.add("Наступне відключення: " + upto(next[0]) + " – " + upto(next[1]));
+                if (next != null) lines.add("Наступне відключення: " + upto(next[0]) + " – " + endOf(next[0], next[1]));
                 else if (unpublished) lines.add("Графік на завтра ще не сформований");
                 else lines.add("Далі відключень не заплановано");
             } else if (next != null) {
-                lines.add("До " + upto(next[0]) + ", а далі відключення до " + upto(next[1]));
+                lines.add("До " + upto(next[0]) + ", а далі відключення до " + endOf(next[0], next[1]));
             } else if (noToday) {
                 lines.add("Графіки ще не опубліковані");
             } else {

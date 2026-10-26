@@ -3,159 +3,192 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingStart="14dp"
-    android:paddingTop="6dp"
-    android:paddingEnd="14dp">
+    android:paddingStart="12dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="12dp">
 
-    <!-- Блок 1: основний статус -->
-    <LinearLayout
+    <!-- Блок 1: основний статус (кнопки — у правому верхньому куті) -->
+    <FrameLayout
         android:id="@+id/statusCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_grey"
-        android:orientation="vertical"
-        android:padding="22dp">
+        android:background="@drawable/bg_grey">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <ImageView
-                android:id="@+id/sIcon"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
-                android:background="@drawable/icon_circle"
-                android:padding="13dp"
-                android:src="@drawable/ic_help" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/sIcon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/icon_circle"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_help" />
+
+                <TextView
+                    android:id="@+id/sTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="84dp"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif-medium"
+                    android:maxLines="1"
+                    android:text="Оновлення…"
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/sTitle"
-                android:layout_width="0dp"
+                android:id="@+id/sSub"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="14dp"
-                android:layout_weight="1"
-                android:fontFamily="sans-serif-medium"
-                android:text="Оновлення…"
-                android:textColor="#FFFFFF"
-                android:textSize="30sp"
-                android:textStyle="bold" />
+                android:layout_marginTop="8dp"
+                android:lineSpacingExtra="1dp"
+                android:textColor="#F2FFFFFF"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/sUpdated"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:textColor="#A6FFFFFF"
+                android:textSize="11sp" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/sSub"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:lineSpacingExtra="3dp"
-            android:textColor="#F2FFFFFF"
-            android:textSize="16sp" />
+            android:layout_gravity="top|end"
+            android:orientation="horizontal"
+            android:padding="6dp">
 
-        <TextView
-            android:id="@+id/sUpdated"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:textColor="#A6FFFFFF"
-            android:textSize="12sp" />
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/btnRefresh"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="9dp"
+                android:src="@drawable/ic_refresh" />
 
-    <!-- Блок 2: графік -->
+            <ImageView
+                android:id="@+id/btnSettings"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="9dp"
+                android:src="@drawable/ic_settings"
+                android:tint="#FFFFFF" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- Блок 2: графік у два стовпчики -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/card_bg"
-        android:orientation="vertical"
-        android:padding="20dp">
+        android:orientation="horizontal"
+        android:padding="14dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Сьогодні"
+                    android:textColor="?attr/cText"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/todayDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:textColor="?attr/cMuted"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/todayRows"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="vertical" />
 
             <TextView
-                android:layout_width="0dp"
+                android:id="@+id/todayNote"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="sans-serif-medium"
-                android:text="Графік на сьогодні"
-                android:textColor="?attr/cText"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/todayDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:textColor="?attr/cMuted"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/todayRows"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:layout_marginStart="14dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/todayNote"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:textColor="?attr/cMuted"
-            android:textSize="15sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="22dp"
-            android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Завтра"
+                    android:textColor="?attr/cText"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tomorrowDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:textColor="?attr/cMuted"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/tomorrowRows"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="vertical" />
 
             <TextView
-                android:layout_width="0dp"
+                android:id="@+id/tomorrowNote"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="sans-serif-medium"
-                android:text="Графік на завтра"
-                android:textColor="?attr/cText"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tomorrowDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:textColor="?attr/cMuted"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
         </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/tomorrowRows"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-
-        <TextView
-            android:id="@+id/tomorrowNote"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:textColor="?attr/cMuted"
-            android:textSize="15sp" />
     </LinearLayout>
-
-    <!-- Блок 3: стрічка -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-medium"
-        android:paddingStart="8dp"
-        android:paddingTop="22dp"
-        android:paddingBottom="6dp"
-        android:text="Повідомлення"
-        android:textColor="?attr/cText"
-        android:textSize="20sp"
-        android:textStyle="bold" />
 </LinearLayout>

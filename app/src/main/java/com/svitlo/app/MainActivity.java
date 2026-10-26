@@ -29,7 +29,7 @@ import java.util.TreeMap;
 
 public class MainActivity extends Activity {
     private final TreeMap<Integer, Msg> msgs = new TreeMap<Integer, Msg>();
-    private final List<Msg> shown = new ArrayList<Msg>(); // найновіші зверху
+    private final List<Msg> shown = new ArrayList<Msg>(); // старіші зверху, найновіші внизу (як у чаті)
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final SimpleDateFormat dayFmt = new SimpleDateFormat("dd.MM", Locale.US);
     private final SimpleDateFormat hmFmt = new SimpleDateFormat("HH:mm", Locale.US);
@@ -37,8 +37,8 @@ public class MainActivity extends Activity {
     private int appliedTheme;
     private ListView list;
     private MsgAdapter adapter;
-    private View headerView;
     private TextView olderBtn;
+    private boolean firstLoad = true;
     private boolean loadingOlder = false;
     private boolean noMoreOlder = false;
 
@@ -59,14 +59,12 @@ public class MainActivity extends Activity {
         hmFmt.setTimeZone(Cfg.TZ);
 
         list = (ListView) findViewById(R.id.list);
-        headerView = LayoutInflater.from(this).inflate(R.layout.header_blocks, list, false);
         View footer = LayoutInflater.from(this).inflate(R.layout.footer_older, list, false);
         olderBtn = (TextView) footer.findViewById(R.id.olderBtn);
         olderBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) { loadOlder(); }
         });
-        list.addHeaderView(headerView, null, false);
-        list.addFooterView(footer, null, false);
+        list.addHeaderView(footer, null, false); // кнопка «старіші» — на початку чату
         adapter = new MsgAdapter();
         list.setAdapter(adapter);
 
@@ -112,25 +110,25 @@ public class MainActivity extends Activity {
     // ---------- блоки 1 і 2 ----------
 
     private void applyStatus(Status s) {
-        View card = headerView.findViewById(R.id.statusCard);
+        View card = findViewById(R.id.statusCard);
         card.setBackgroundResource(StatusWidget.bgRes(s.bg));
-        ((ImageView) headerView.findViewById(R.id.sIcon)).setImageResource(StatusWidget.iconRes(s.icon));
-        ((TextView) headerView.findViewById(R.id.sTitle)).setText(s.title);
-        TextView sub = (TextView) headerView.findViewById(R.id.sSub);
+        ((ImageView) findViewById(R.id.sIcon)).setImageResource(StatusWidget.iconRes(s.icon));
+        ((TextView) findViewById(R.id.sTitle)).setText(s.title);
+        TextView sub = (TextView) findViewById(R.id.sSub);
         sub.setText(s.sub);
         sub.setVisibility(s.sub.length() > 0 ? View.VISIBLE : View.GONE);
-        TextView upd = (TextView) headerView.findViewById(R.id.sUpdated);
+        TextView upd = (TextView) findViewById(R.id.sUpdated);
         upd.setText(s.time > 0 ? "оновлено " + hmFmt.format(new Date(s.time)) : "");
 
         Calendar c = Calendar.getInstance(Cfg.TZ);
         int nowM = c.get(Calendar.HOUR_OF_DAY) * 60 + c.get(Calendar.MINUTE);
 
-        ((TextView) headerView.findViewById(R.id.todayDate)).setText(s.todayLabel);
-        ((TextView) headerView.findViewById(R.id.tomorrowDate)).setText(s.tomorrowLabel);
-        fillRows((LinearLayout) headerView.findViewById(R.id.todayRows), s.todayRows, true, nowM);
-        fillRows((LinearLayout) headerView.findViewById(R.id.tomorrowRows), s.tomorrowRows, false, nowM);
-        setNote((TextView) headerView.findViewById(R.id.todayNote), s.todayNote);
-        setNote((TextView) headerView.findViewById(R.id.tomorrowNote), s.tomorrowNote);
+        ((TextView) findViewById(R.id.todayDate)).setText(s.todayLabel);
+        ((TextView) findViewById(R.id.tomorrowDate)).setText(s.tomorrowLabel);
+        fillRows((ViewGroup) findViewById(R.id.todayRows), s.todayRows, true, nowM);
+        fillRows((ViewGroup) findViewById(R.id.tomorrowRows), s.tomorrowRows, false, nowM);
+        setNote((TextView) findViewById(R.id.todayNote), s.todayNote);
+        setNote((TextView) findViewById(R.id.tomorrowNote), s.tomorrowNote);
     }
 
     private void setNote(TextView t, String text) {
@@ -138,32 +136,23 @@ public class MainActivity extends Activity {
         t.setVisibility(text.length() > 0 ? View.VISIBLE : View.GONE);
     }
 
-    private static String dur(int minutes) {
-        int h = minutes / 60, m = minutes % 60;
-        if (h > 0 && m > 0) return h + " год " + m + " хв";
-        if (h > 0) return h + " год";
-        return m + " хв";
-    }
-
     private static String hm(int m) {
         m = ((m % 1440) + 1440) % 1440;
         return String.format(Locale.US, "%02d:%02d", m / 60, m % 60);
     }
 
-    private void fillRows(LinearLayout box, List<int[]> rows, boolean isToday, int nowM) {
+    private void fillRows(ViewGroup box, List<int[]> rows, boolean isToday, int nowM) {
         box.removeAllViews();
         LayoutInflater inf = LayoutInflater.from(this);
         for (int[] r : rows) {
-            View v = inf.inflate(R.layout.row_slot, box, false);
+            View v = inf.inflate(R.layout.chip_slot, box, false);
             v.findViewById(R.id.dot).setBackgroundResource(r[2] == 1 ? R.drawable.dot_amber : R.drawable.dot_red);
             ((TextView) v.findViewById(R.id.range)).setText(
                     hm(r[0]) + " – " + (r[1] == 1440 ? "24:00" : hm(r[1])));
-            ((TextView) v.findViewById(R.id.dur)).setText(
-                    (r[2] == 1 ? "можливо · " : "") + dur(r[1] - r[0]));
-            TextView tag = (TextView) v.findViewById(R.id.tag);
-            if (isToday && r[2] == 0 && r[0] <= nowM && nowM < r[1]) {
-                tag.setText("зараз");
-                tag.setVisibility(View.VISIBLE);
+            if (isToday && r[2] == 0 && r[0] <= nowM && nowM < r[1]) { // зараз триває
+                TextView range = (TextView) v.findViewById(R.id.range);
+                range.setTextColor(0xFFFF453A);
+                range.setTypeface(range.getTypeface(), android.graphics.Typeface.BOLD);
             }
             if (isToday && r[1] <= nowM) v.setAlpha(0.45f); // минуле відключення
             box.addView(v);
@@ -185,7 +174,7 @@ public class MainActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override public void run() {
                         applyStatus(st);
-                        if (fin != null) merge(fin);
+                        if (fin != null) merge(fin, true);
                     }
                 });
             }
@@ -211,8 +200,13 @@ public class MainActivity extends Activity {
                         olderBtn.setText("Завантажити старіші");
                         if (fin == null) return;
                         int oldCount = shown.size();
-                        merge(fin);
-                        if (shown.size() == oldCount) {
+                        int pos = list.getFirstVisiblePosition();
+                        View c0 = list.getChildAt(0);
+                        int top = c0 == null ? 0 : c0.getTop();
+                        merge(fin, false);
+                        int added = shown.size() - oldCount;
+                        if (added > 0) list.setSelectionFromTop(pos + added, top); // не збиваємо позицію
+                        if (added == 0) {
                             noMoreOlder = true;
                             olderBtn.setText("Старіших повідомлень немає");
                         }
@@ -223,14 +217,19 @@ public class MainActivity extends Activity {
     }
 
     /** Додає/оновлює повідомлення (за номером) і перемальовує стрічку. */
-    private void merge(List<Msg> got) {
+    private void merge(List<Msg> got, boolean fromReload) {
+        boolean atBottom = firstLoad || list.getLastVisiblePosition() >= list.getCount() - 2;
         for (Msg m : got) {
-            if (m.id == Cfg.STATUS_POST) continue; // закріплений статус показано у блоці 1
+            if (m.id == Cfg.STATUS_POST) continue; // закріплений статус показано вгорі
             msgs.put(m.id, m);
         }
         shown.clear();
-        shown.addAll(msgs.descendingMap().values());
+        shown.addAll(msgs.values());
         adapter.notifyDataSetChanged();
+        if (fromReload && atBottom && !shown.isEmpty()) {
+            list.setSelection(list.getCount() - 1); // нові повідомлення — внизу, як у чаті
+        }
+        if (fromReload) firstLoad = false;
     }
 
     private String when(long t) {
