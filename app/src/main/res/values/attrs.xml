@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="cBg" format="color" />
+    <attr name="cCard" format="color" />
+    <attr name="cRow" format="color" />
+    <attr name="cText" format="color" />
+    <attr name="cMuted" format="color" />
+</resources>
